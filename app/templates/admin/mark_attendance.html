@@ -1,0 +1,79 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Mark Attendance</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Filter Staff by Center</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('main.mark_attendance') }}">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form.date.label(class="form-label") }}
+                    {{ form.date(class="form-control") }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.center.label(class="form-label") }}
+                    {{ form.center(class="form-control") }}
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if staff_list %}
+<div class="card">
+    <div class="card-header">
+        <h5>Staff Attendance for {{ form.date.data.strftime('%Y-%m-%d') }}</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="date" value="{{ form.date.data }}">
+            <input type="hidden" name="center_id" value="{{ form.center.data }}">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Staff Name</th>
+                        <th>Position</th>
+                        <th>Attendance Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for staff in staff_list %}
+                    <tr>
+                        <td>{{ staff.name }}</td>
+                        <td>{{ staff.position }}</td>
+                        <td>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" 
+                                    name="status_{{ staff.id }}" id="present_{{ staff.id }}" 
+                                    value="Present" checked>
+                                <label class="form-check-label" for="present_{{ staff.id }}">Present</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" 
+                                    name="status_{{ staff.id }}" id="absent_{{ staff.id }}" 
+                                    value="Absent">
+                                <label class="form-check-label" for="absent_{{ staff.id }}">Absent</label>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="mt-3">
+                <button type="submit" name="submit_attendance" class="btn btn-success">Save Attendance</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

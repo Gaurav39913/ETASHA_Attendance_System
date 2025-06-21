@@ -1,0 +1,65 @@
+﻿{% extends "base.html" %}
+
+{% block title %}View Attendance{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">View Attendance</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Filter Attendance</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('main.view_attendance') }}">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form.date.label(class="form-label") }}
+                    {{ form.date(class="form-control") }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.center.label(class="form-label") }}
+                    {{ form.center(class="form-control") }}
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if attendance_records %}
+<div class="card">
+    <div class="card-header">
+        <h5>Attendance Records for {{ form.date.data.strftime('%Y-%m-%d') }}</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Staff Name</th>
+                    <th>Position</th>
+                    <th>Center</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record, staff in attendance_records %}
+                <tr>
+                    <td>{{ staff.name }}</td>
+                    <td>{{ staff.position }}</td>
+                    <td>{{ staff.center.name }}</td>
+                    <td>
+                        <span class="badge bg-{% if record.status == 'Present' %}success{% else %}danger{% endif %}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
